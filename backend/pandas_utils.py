@@ -19,3 +19,9 @@ def map_dfs_columns(dfs: List[pandas.DataFrame], key_column: str = "ФИО") -> 
     return mapped_dfs
 
 
+def join_dfs(dfs: List[pandas.DataFrame], join_column: str = "ФИО") -> pandas.DataFrame:
+    result_df = dfs[0]
+    for df in dfs[1:]:
+        result_df = pandas.merge(result_df, df, on=join_column, how='inner')
+
+    return result_df
