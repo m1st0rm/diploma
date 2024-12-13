@@ -1,4 +1,4 @@
-from custom_typing import (
+from backend.custom_typing import (
     STUDENTS_STATS_NON_AGGREGATED_TYPE as students_stats_non_aggregated_type,
     STUDENTS_STATS_AGGREGATED_BY_CONTROL_FORM_TYPE as students_stats_aggregated_by_control_form_type,
 )

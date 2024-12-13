@@ -1,6 +1,5 @@
 import pandas
 from pandas import DataFrame
-from typing import List
 from backend.custom_typing import STUDENTS_STATS_NON_AGGREGATED_TYPE as students_stats_non_aggregated_type
 
 
