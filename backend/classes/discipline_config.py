@@ -5,7 +5,7 @@ from dataclasses import dataclass
 class DisciplineConfig:
     contol_form: str
     name: str
-    priority: int
+    semester: int
     mark: int | str
     study_hours: int
     credits_number: int | float
