@@ -2,7 +2,7 @@ from backend.custom_typing import (
     STUDENTS_STATS_RAW_TYPE,
     STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS
 )
-from classes.discipline_config import DisciplineConfig
+from backend.classes.discipline_config import DisciplineConfig
 
 
 PRACTICE_ABBREVIATION = 'ПР'
