@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class DisciplineConfig:
-    contol_type_form: str
+    contol_form: str
     name: str
     priority: int
     mark: int | str
