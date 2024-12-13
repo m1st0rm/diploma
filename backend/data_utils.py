@@ -29,13 +29,23 @@ def get_students_stats_with_discipline_configs(
                 discipline_study_hours = int(discipline_info.split('/')[1].split(':')[0])
                 discipline_credits_number = float(discipline_info.split('/')[1].split(':')[1])
 
+                if discipline_control_form == PRACTICE_ABBREVIATION:
+                    discipline_category = 'practice'
+                elif discipline_control_form == COURSE_PROJECT_ABBREVIATION:
+                    discipline_category = 'course project'
+                elif discipline_control_form == COURSE_WORK_ABBREVIATION:
+                    discipline_category = 'course work'
+                else:
+                    discipline_category = 'regular'
+
                 discipline_config = DisciplineConfig(
                     discipline_control_form,
                     discipline_name,
                     discipline_semester,
                     discipline_mark,
                     discipline_study_hours,
-                    discipline_credits_number
+                    discipline_credits_number,
+                    discipline_category
                 )
                 discipline_configs.append(discipline_config)
             students_stats_with_discipline_configs[student_full_name] = discipline_configs
