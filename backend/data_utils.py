@@ -1,7 +1,8 @@
 from backend.custom_typing import (
-    STUDENTS_STATS_NON_AGGREGATED_TYPE as students_stats_non_aggregated_type,
-    STUDENTS_STATS_AGGREGATED_BY_CONTROL_FORM_TYPE as students_stats_aggregated_by_control_form_type,
+    STUDENTS_STATS_RAW_TYPE,
+    STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS
 )
+from classes.discipline_config import DisciplineConfig
 
 
 PRACTICE_ABBREVIATION = 'ПР'
@@ -14,38 +15,29 @@ COURSE_PROJECT_DISCIPLINES_KEY = 'course_project_disciplines'
 COURSE_WORK_DISCIPLINES_KEY = 'course_work_disciplines'
 
 
-def get_students_stats_aggregated_by_control_form(
-        students_stats: students_stats_non_aggregated_type
-) -> students_stats_aggregated_by_control_form_type:
-    students_stats_aggregated_by_control_form = []
-
+def get_students_stats_with_discipline_configs(
+        students_stats: STUDENTS_STATS_RAW_TYPE
+) -> STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS:
+    students_stats_with_discipline_configs = {}
     for student_stats in students_stats:
-        regular_disciplines = []
-        practice_disciplines = []
-        course_project_disciplines = []
-        course_work_disciplines = []
-        for full_name, disciplines_dict in student_stats.items():
-            for discipline_name, discipline_mark in disciplines_dict.items():
-                discipline_category = discipline_name.split(':')[-1]
-                if discipline_category == PRACTICE_ABBREVIATION:
-                    practice_disciplines.append({discipline_name: discipline_mark})
-                elif discipline_category == COURSE_PROJECT_ABBREVIATION:
-                    course_project_disciplines.append({discipline_name: discipline_mark})
-                elif discipline_category == COURSE_WORK_ABBREVIATION:
-                    course_work_disciplines.append({discipline_name: discipline_mark})
-                else:
-                    regular_disciplines.append({discipline_name: discipline_mark})
+        for student_full_name, disciplines_dict in student_stats.items():
+            discipline_configs = []
+            for discipline_info, discipline_mark in disciplines_dict.items():
+                discipline_control_form = discipline_info.split(':')[2]
+                discipline_name = discipline_info.split('.')[1].split('/')[0]
+                discipline_semester = int(discipline_info.split('.')[0])
+                discipline_study_hours = int(discipline_info.split('/')[1].split(':')[0])
+                discipline_credits_number = float(discipline_info.split('/')[1].split(':')[1])
 
-            regular_disciplines_dict = {k: v for d in regular_disciplines for k, v in d.items()}
-            practice_disciplines_dict = {k: v for d in practice_disciplines for k, v in d.items()}
-            course_work_disciplines_dict = {k: v for d in course_work_disciplines for k, v in d.items()}
-            course_project_disciplines_dict = {k: v for d in course_project_disciplines for k, v in d.items()}
+                discipline_config = DisciplineConfig(
+                    discipline_control_form,
+                    discipline_name,
+                    discipline_semester,
+                    discipline_mark,
+                    discipline_study_hours,
+                    discipline_credits_number
+                )
+                discipline_configs.append(discipline_config)
+            students_stats_with_discipline_configs[student_full_name] = discipline_configs
 
-            students_stats_aggregated_by_control_form.append({full_name: {
-                REGULAR_DISCIPLINES_KEY: regular_disciplines_dict,
-                PRACTICE_DISCIPLINES_KEY: practice_disciplines_dict,
-                COURSE_PROJECT_DISCIPLINES_KEY: course_project_disciplines_dict,
-                COURSE_WORK_DISCIPLINES_KEY: course_work_disciplines_dict,
-            }})
-
-    return students_stats_aggregated_by_control_form
+    return students_stats_with_discipline_configs

@@ -1,6 +1,6 @@
 import pandas
 from pandas import DataFrame
-from backend.custom_typing import STUDENTS_STATS_RAW_TYPE as students_stats_raw_type
+from backend.custom_typing import STUDENTS_STATS_RAW_TYPE
 
 
 def read_xlsx(
@@ -39,8 +39,6 @@ def join_dfs(
 def get_students_stats_raw(
         df: DataFrame,
         set_index: str = "ФИО"
-) -> students_stats_raw_type:
+) -> STUDENTS_STATS_RAW_TYPE:
     dfs_divided_by_full_name = [row.to_frame().T.reset_index(drop=True) for _, row in df.iterrows()]
     return [df.set_index(set_index).to_dict(orient='index') for df in dfs_divided_by_full_name]
-
-
