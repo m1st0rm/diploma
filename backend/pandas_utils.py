@@ -36,7 +36,7 @@ def join_dfs(
     return result_df
 
 
-def get_students_stats_non_aggregated(
+def get_students_stats_raw(
         df: DataFrame,
         set_index: str = "ФИО"
 ) -> students_stats_non_aggregated_type:
