@@ -9,10 +9,10 @@ PRACTICE_ABBREVIATION = 'ПР'
 COURSE_PROJECT_ABBREVIATION = 'КП'
 COURSE_WORK_ABBREVIATION = 'КР'
 
-REGULAR_DISCIPLINES_KEY = 'regular_disciplines'
-PRACTICE_DISCIPLINES_KEY = 'practice_disciplines'
-COURSE_PROJECT_DISCIPLINES_KEY = 'course_project_disciplines'
-COURSE_WORK_DISCIPLINES_KEY = 'course_work_disciplines'
+PRACTICE_CATEGORY = 'practice'
+COURSE_PROJECT_CATEGORY = 'course_project'
+COURSE_WORK_CATEGORY = 'course_work'
+REGULAR_CATEGORY = 'regular'
 
 
 def get_students_stats_with_discipline_configs(
@@ -30,13 +30,13 @@ def get_students_stats_with_discipline_configs(
                 discipline_credits_number = float(discipline_info.split('/')[1].split(':')[1])
 
                 if discipline_control_form == PRACTICE_ABBREVIATION:
-                    discipline_category = 'practice'
+                    discipline_category = PRACTICE_CATEGORY
                 elif discipline_control_form == COURSE_PROJECT_ABBREVIATION:
-                    discipline_category = 'course project'
+                    discipline_category = COURSE_PROJECT_CATEGORY
                 elif discipline_control_form == COURSE_WORK_ABBREVIATION:
-                    discipline_category = 'course work'
+                    discipline_category = COURSE_WORK_CATEGORY
                 else:
-                    discipline_category = 'regular'
+                    discipline_category = REGULAR_CATEGORY
 
                 discipline_config = DisciplineConfig(
                     discipline_control_form,
