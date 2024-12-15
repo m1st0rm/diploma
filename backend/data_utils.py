@@ -1,9 +1,12 @@
 from backend.custom_typing import (
     STUDENTS_STATS_RAW_TYPE,
     STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE,
-    STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE
+    STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE,
+    STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE
 )
 from backend.classes.discipline_config import DisciplineConfig
+from copy import deepcopy
+from collections import defaultdict
 
 
 PRACTICE_ABBREVIATION = 'ПР'
@@ -85,3 +88,55 @@ def get_students_stats_with_discipline_configs_grouped_by_category(
             student_full_name] = discipline_configs_grouped_by_category
 
     return students_stats_with_discipline_configs_grouped_by_category
+
+
+def get_students_stats_with_discipline_configs_grouped_by_category_summarized(
+        students_stats_with_discipline_configs_grouped_by_category:
+        STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE,
+) -> STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE:
+    students_stats_with_discipline_configs_grouped_by_category_summarized = deepcopy(
+        students_stats_with_discipline_configs_grouped_by_category)
+
+    for student_full_name, stats_discipline_configs in (
+            students_stats_with_discipline_configs_grouped_by_category_summarized.items()):
+        regular_disciplines_configs = stats_discipline_configs[REGULAR_CATEGORY]
+
+        discipline_configs_grouped_by_name = defaultdict(list)
+        for discipline_config in regular_disciplines_configs:
+            discipline_configs_grouped_by_name[discipline_config.name].append(discipline_config)
+
+        discipline_configs_groups_by_name = list(discipline_configs_grouped_by_name.values())
+
+        summarized_regular_stats_discipline_configs = []
+
+        for discipline_configs_group_by_name in discipline_configs_groups_by_name:
+            summarized_control_form = "СФ"
+            summarized_name = discipline_configs_group_by_name[0].name
+            summarized_semesters = []
+            summarized_mark = []
+            summarized_study_hours = 0
+            summarized_credits_number = 0.0
+            summarized_category = REGULAR_CATEGORY
+
+            for discipline_config in discipline_configs_group_by_name:
+                summarized_semesters.append(discipline_config.semester)
+                summarized_mark.append(discipline_config.mark)
+                summarized_study_hours += discipline_config.study_hours
+                summarized_credits_number += discipline_config.credits_number
+
+            summarized_regular_stats_discipline_configs.append(DisciplineConfig(
+                summarized_control_form,
+                summarized_name,
+                min(summarized_semesters),
+                summarized_mark,
+                summarized_study_hours,
+                summarized_credits_number,
+                summarized_category
+            ))
+
+        summarized_regular_stats_discipline_configs.sort(
+            key=lambda summarized_discipline_config: summarized_discipline_config.semester)
+
+        stats_discipline_configs[REGULAR_CATEGORY] = summarized_regular_stats_discipline_configs
+
+    return students_stats_with_discipline_configs_grouped_by_category_summarized
