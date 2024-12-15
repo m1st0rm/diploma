@@ -27,7 +27,7 @@ def get_students_stats_with_discipline_configs(
                 discipline_name = discipline_info.split('.')[1].split('/')[0]
                 discipline_semester = int(discipline_info.split('.')[0])
                 discipline_study_hours = int(discipline_info.split('/')[1].split(':')[0])
-                discipline_credits_number = float(discipline_info.split('/')[1].split(':')[1])
+                discipline_credits_number = float(discipline_info.split(':')[1])
 
                 if discipline_control_form == PRACTICE_ABBREVIATION:
                     discipline_category = PRACTICE_CATEGORY
