@@ -13,11 +13,11 @@ class DisciplineConfig:
 
     def __repr__(self) -> str:
         return f"""
-        Discipline name: {self.name}\n
-        Contol form: {self.contol_form}\n
-        Semester: {self.semester}\n
-        Mark: {self.mark}\n
-        Study hours: {self.study_hours}\n
-        Credits number: {self.credits_number}\n
-        Categoty: {self.categoty}\n
+        Discipline name: {self.name}
+        Contol form: {self.contol_form}
+        Semester: {self.semester}
+        Mark: {self.mark}
+        Study hours: {self.study_hours}
+        Credits number: {self.credits_number}
+        Categoty: {self.categoty}
         """
