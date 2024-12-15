@@ -6,7 +6,7 @@ class DisciplineConfig:
     contol_form: str
     name: str
     semester: int
-    mark: int | str
+    mark: int | str | list[int | str]
     study_hours: int
     credits_number: int | float
     categoty: str
