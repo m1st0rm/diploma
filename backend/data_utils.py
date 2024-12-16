@@ -5,18 +5,39 @@ from backend.custom_typing import (
     STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE
 )
 from backend.classes.discipline_config import DisciplineConfig
+from backend.classes.student_config import StudentConfig
 from copy import deepcopy
 from collections import defaultdict
-
+from pandas import DataFrame
 
 PRACTICE_ABBREVIATION = 'ПР'
 COURSE_PROJECT_ABBREVIATION = 'КП'
 COURSE_WORK_ABBREVIATION = 'КР'
 
+SUMMARIZED_CONTROL_FORM_ABBREVIATION = "СФ"
+
+CREDITS_NUMBER_TEMPLATE = " ({} з.е.)"
+
+CREDIT_MARK = 'зч'
+
 PRACTICE_CATEGORY = 'practice'
 COURSE_PROJECT_CATEGORY = 'course_project'
 COURSE_WORK_CATEGORY = 'course_work'
 REGULAR_CATEGORY = 'regular'
+
+DIPLOMA_THEMES_DATAFRAME_FULL_NAME_COLUMN = 'ФИО'
+DIPLOMA_THEMES_DATAFRAME_THEME_COLUMN = 'Тема димпломного проекта'
+
+MARKS_MAPPING = {
+    4: 'четыре',
+    5: 'пять',
+    6: 'шесть',
+    7: 'семь',
+    8: 'восемь',
+    9: 'девять',
+    10: 'десять',
+    'зч': 'зачтено'
+}
 
 
 def get_students_stats_with_discipline_configs(
@@ -110,7 +131,7 @@ def get_students_stats_with_discipline_configs_grouped_by_category_summarized(
         summarized_regular_stats_discipline_configs = []
 
         for discipline_configs_group_by_name in discipline_configs_groups_by_name:
-            summarized_control_form = "СФ"
+            summarized_control_form = SUMMARIZED_CONTROL_FORM_ABBREVIATION
             summarized_name = discipline_configs_group_by_name[0].name
             summarized_semesters = []
             summarized_mark = []
@@ -140,3 +161,76 @@ def get_students_stats_with_discipline_configs_grouped_by_category_summarized(
         stats_discipline_configs[REGULAR_CATEGORY] = summarized_regular_stats_discipline_configs
 
     return students_stats_with_discipline_configs_grouped_by_category_summarized
+
+
+def get_disciplines_for_student_config(
+        stats_discipline_configs: list[DisciplineConfig]
+):
+    disciplines = []
+    for discipline_config in stats_discipline_configs:
+        discipline_name = discipline_config.name
+        discipline_hours = str(discipline_config.study_hours)
+
+        if discipline_config.credits_number.is_integer():
+            discipline_credits_number = (str(int(discipline_config.credits_number))
+                                         if int(discipline_config.credits_number) != 0
+                                         else '')
+        else:
+            discipline_credits_number = str(discipline_config.credits_number).replace('.', ',')
+
+        if discipline_credits_number == '':
+            discipline_hours_and_credits_number = discipline_hours
+        else:
+            discipline_hours_and_credits_number = (discipline_hours +
+                                                   CREDITS_NUMBER_TEMPLATE.format(discipline_credits_number))
+
+        if isinstance(discipline_config.mark, list):
+            if all(mark == CREDIT_MARK for mark in discipline_config.mark):
+                discipline_mark = MARKS_MAPPING[CREDIT_MARK]
+            else:
+                discipline_mark = ', '.join(MARKS_MAPPING[mark] for mark in discipline_config.mark)
+        else:
+            discipline_mark = MARKS_MAPPING[discipline_config.mark]
+
+        disciplines.append((discipline_name, discipline_hours_and_credits_number, discipline_mark))
+
+    return disciplines
+
+
+def get_students_configs(
+        students_stats_with_discipline_configs_grouped_by_category_summarized:
+        STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE,
+        diploma_themes_df: DataFrame
+) -> list[StudentConfig]:
+    students_configs = []
+
+    diploma_themes_dict = (diploma_themes_df.set_index(DIPLOMA_THEMES_DATAFRAME_FULL_NAME_COLUMN)
+                           [DIPLOMA_THEMES_DATAFRAME_THEME_COLUMN].to_dict())
+    for full_name, stats_disciplines_configs in (
+            students_stats_with_discipline_configs_grouped_by_category_summarized.items()):
+        student_full_name = full_name
+
+        student_regular_disciplines = get_disciplines_for_student_config(
+            stats_disciplines_configs[REGULAR_CATEGORY])
+
+        student_course_work_disciplines = get_disciplines_for_student_config(
+            stats_disciplines_configs[COURSE_WORK_CATEGORY])
+
+        student_course_project_disciplines = (get_disciplines_for_student_config(
+            stats_disciplines_configs[COURSE_PROJECT_CATEGORY]))
+
+        student_practice_disciplines = get_disciplines_for_student_config(
+            stats_disciplines_configs[PRACTICE_CATEGORY])
+
+        student_diploma_theme = diploma_themes_dict[full_name]
+
+        students_configs.append(StudentConfig(
+            student_full_name,
+            student_regular_disciplines,
+            student_course_work_disciplines,
+            student_course_project_disciplines,
+            student_practice_disciplines,
+            student_diploma_theme
+        ))
+
+    return students_configs
