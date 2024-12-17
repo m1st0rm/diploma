@@ -1,6 +1,4 @@
 import pandas as pd
-from pandas import DataFrame
-from backend.custom_typing import STUDENTS_STATS_RAW_TYPE
 from backend.pandas_utils import read_xlsx, map_dfs_columns, join_dfs, get_students_stats_raw
 import pytest
 
