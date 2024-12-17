@@ -14,23 +14,23 @@ from dataclasses import dataclass
 @dataclass
 class CommonConfig:
     """
-       A class representing shared configuration details for document generation.
+    A class representing shared configuration details for document generation.
 
-       Attributes:
-           start_date_day: The starting day of the study period.
-           start_date_month: The starting month of the study period.
-           start_date_year: The starting year of the study period.
-           end_date_day: The ending day of the study period.
-           end_date_month: The ending month of the study period.
-           end_date_year: The ending year of the study period.
-           specialty_code: The code of the student's specialty.
-           specialty_name: The full name of the student's specialty.
-           specialty_area_code: The code of the specialty area or direction.
-           specialty_area_name: The full name of the specialty area or direction.
-           statement_date_day: The day of the statement generation.
-           statement_date_month: The month of the statement generation.
-           statement_date_year: The year of the statement generation.
-       """
+    Attributes:
+       start_date_day: The starting day of the study period.
+       start_date_month: The starting month of the study period.
+       start_date_year: The starting year of the study period.
+       end_date_day: The ending day of the study period.
+       end_date_month: The ending month of the study period.
+       end_date_year: The ending year of the study period.
+       specialty_code: The code of the student's specialty.
+       specialty_name: The full name of the student's specialty.
+       specialty_area_code: The code of the specialty area or direction.
+       specialty_area_name: The full name of the specialty area or direction.
+       statement_date_day: The day of the statement generation.
+       statement_date_month: The month of the statement generation.
+       statement_date_year: The year of the statement generation.
+    """
     start_date_day: str
     start_date_month: str
     start_date_year: str
