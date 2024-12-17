@@ -1,3 +1,26 @@
+"""
+Module for processing and transforming student statistics with discipline configurations.
+
+This module provides functions to:
+1. Parse and transform raw student statistics into structured discipline configurations.
+2. Group and summarize discipline configurations by categories such as regular, course work, course project, and practice.
+3. Map disciplines to formatted outputs suitable for student reports.
+4. Generate final student configurations, including diploma themes and structured discipline data.
+
+Functions:
+- get_students_stats_with_discipline_configs: Transforms raw statistics into discipline configurations.
+- get_students_stats_with_discipline_configs_grouped_by_category: Groups disciplines by category.
+- get_students_stats_with_discipline_configs_grouped_by_category_summarized: Summarizes disciplines by name.
+- get_disciplines_for_student_config: Formats disciplines for output.
+- get_students_configs: Generates a list of structured student configurations.
+
+Dependencies:
+- pandas: For data manipulation.
+- backend.custom_typing: Custom typing definitions.
+- backend.classes.discipline_config: Discipline configuration class.
+- backend.classes.student_config: Student configuration class.
+"""
+
 from backend.custom_typing import (
     STUDENTS_STATS_RAW_TYPE,
     STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE,
@@ -43,6 +66,14 @@ MARKS_MAPPING = {
 def get_students_stats_with_discipline_configs(
         students_stats: STUDENTS_STATS_RAW_TYPE
 ) -> STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE:
+    """
+    Transforms raw student statistics into structured discipline configurations.
+
+    :param students_stats: A list of dictionaries containing raw student statistics.
+    :type students_stats: STUDENTS_STATS_RAW_TYPE
+    :return: A dictionary mapping student names to their discipline configurations.
+    :rtype: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE
+    """
     students_stats_with_discipline_configs = {}
     for student_stats in students_stats:
         for student_full_name, disciplines_dict in student_stats.items():
@@ -81,6 +112,14 @@ def get_students_stats_with_discipline_configs(
 def get_students_stats_with_discipline_configs_grouped_by_category(
         students_stats_with_discipline_configs: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE
 ) -> STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE:
+    """
+    Groups student discipline configurations into predefined categories.
+
+    :param students_stats_with_discipline_configs: A dictionary of student discipline configurations.
+    :type students_stats_with_discipline_configs: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE
+    :return: A dictionary mapping student names to their grouped discipline configurations.
+    :rtype: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE
+    """
     students_stats_with_discipline_configs_grouped_by_category = {}
     categories = (REGULAR_CATEGORY, COURSE_WORK_CATEGORY, COURSE_PROJECT_CATEGORY, PRACTICE_CATEGORY)
     for student_full_name, stats_discipline_configs in students_stats_with_discipline_configs.items():
@@ -115,6 +154,14 @@ def get_students_stats_with_discipline_configs_grouped_by_category_summarized(
         students_stats_with_discipline_configs_grouped_by_category:
         STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE,
 ) -> STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE:
+    """
+    Summarizes regular disciplines grouped by name, combining marks, hours, and credits.
+
+    :param students_stats_with_discipline_configs_grouped_by_category: Grouped discipline configurations.
+    :type students_stats_with_discipline_configs_grouped_by_category: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE
+    :return: A dictionary with summarized discipline configurations.
+    :rtype: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE
+    """
     students_stats_with_discipline_configs_grouped_by_category_summarized = deepcopy(
         students_stats_with_discipline_configs_grouped_by_category)
 
@@ -165,7 +212,15 @@ def get_students_stats_with_discipline_configs_grouped_by_category_summarized(
 
 def get_disciplines_for_student_config(
         stats_discipline_configs: list[DisciplineConfig]
-):
+) -> list[tuple[str, str, str]]:
+    """
+    Formats a list of discipline configurations for output, including name, hours, credits, and marks.
+
+    :param stats_discipline_configs: A list of discipline configurations for a student.
+    :type stats_discipline_configs: list[DisciplineConfig]
+    :return: A list of tuples containing formatted discipline data: (name, hours_and_credits, mark).
+    :rtype: list[tuple[str, str, str]]
+    """
     disciplines = []
     for discipline_config in stats_discipline_configs:
         discipline_name = discipline_config.name
@@ -202,6 +257,18 @@ def get_students_configs(
         STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE,
         diploma_themes_df: DataFrame
 ) -> list[StudentConfig]:
+    """
+    Generates a list of student configurations, including formatted disciplines and diploma themes.
+
+    :param students_stats_with_discipline_configs_grouped_by_category_summarized: 
+        Summarized discipline configurations grouped by category for all students.
+    :type students_stats_with_discipline_configs_grouped_by_category_summarized: 
+        STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE
+    :param diploma_themes_df: A DataFrame containing student names and their corresponding diploma themes.
+    :type diploma_themes_df: DataFrame
+    :return: A list of StudentConfig objects containing structured student data.
+    :rtype: list[StudentConfig]
+    """
     students_configs = []
 
     diploma_themes_dict = (diploma_themes_df.set_index(DIPLOMA_THEMES_DATAFRAME_FULL_NAME_COLUMN)
