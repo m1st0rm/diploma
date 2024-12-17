@@ -1,3 +1,20 @@
+"""
+Module for building Word documents (.docx) using student and common configurations.
+
+This module processes template Word files, fills in the required fields, and generates formatted
+documents for students based on their disciplines, diploma themes, and other configurations.
+
+Functions:
+- build_docx: Generates a single Word document for a specific student.
+- build_statements: Builds multiple Word documents for a list of students.
+
+Dependencies:
+- python-docx: For creating and modifying Word documents.
+- os: For handling file paths.
+- backend.classes.student_config: Student configuration class.
+- backend.classes.common_config: Common configuration class.
+"""
+
 from docx import Document
 from docx.shared import Pt
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
@@ -12,6 +29,19 @@ def build_docx(
         student_config: StudentConfig,
         common_config: CommonConfig,
 ) -> None:
+    """
+    Generates a single Word document (.docx) for a student based on the provided template.
+
+    :param template_path: The file path to the Word document template.
+    :type template_path: str
+    :param save_directory_path: The directory path where the generated document will be saved.
+    :type save_directory_path: str
+    :param student_config: Configuration containing student's disciplines, full name, and diploma theme.
+    :type student_config: StudentConfig
+    :param common_config: Configuration containing common information such as dates and specialty details.
+    :type common_config: CommonConfig
+    :return: None
+    """
     document = Document(template_path)
 
     paragraph_1 = document.paragraphs[5]
@@ -164,6 +194,19 @@ def build_statements(
         students_configs: list[StudentConfig],
         common_config: CommonConfig,
 ) -> None:
+    """
+    Generates multiple Word documents (.docx) for a list of students using a provided template.
+
+    :param template_path: The file path to the Word document template.
+    :type template_path: str
+    :param save_directory_path: The directory path where all generated documents will be saved.
+    :type save_directory_path: str
+    :param students_configs: A list of StudentConfig objects containing individual student data.
+    :type students_configs: list[StudentConfig]
+    :param common_config: Common configuration containing shared details like dates and specialties.
+    :type common_config: CommonConfig
+    :return: None
+    """
     for student_config in students_configs:
         build_docx(template_path,
                    save_directory_path,
