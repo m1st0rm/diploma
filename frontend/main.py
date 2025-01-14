@@ -2,10 +2,50 @@ import tkinter as tk
 from tkinter import filedialog, ttk
 from tkinter import messagebox
 from tkcalendar import DateEntry
+from typing import Any
 
+state_holder: dict[str, Any] = {
+    'semester_files_count': None,
+    'semester_files_paths': None,
+}
 
 GRID_COLUMNS_COUNT = 4
 SEMESTER_COUNT_COMBOBOX_VALUES = ('1', '2', '3', '4', '5', '6', '7', '8')
+
+
+def on_semester_count_combobox_selected(
+        semester_count_combobox: ttk.Combobox,
+):
+    global state_holder
+    files_count = int(semester_count_combobox.get())
+    state_holder['semester_files_count'] = files_count
+
+
+def push_semester_files_button(
+        semester_files_text: tk.Text,
+):
+    global state_holder
+    file_paths = filedialog.askopenfilenames(
+        title='Выберите файлы зачётно-экзаменационных ведомостей в порядке их хронологического следования:',
+        filetypes=[(
+            "Файлы Excel",
+            "*.xlsx"
+        ), ]
+    )
+    if len(file_paths) != 0:
+        state_holder['semester_files_paths'] = file_paths
+        semester_files_text.config(state=tk.NORMAL)
+        semester_files_text.delete('1.0', tk.END)
+        semester_files_text.insert(
+            '1.0',
+            (
+                    'Выбранные файлы зачётно-экзаменационных ведомостей:\n'
+                    +
+                    '\n'.join(state_holder['semester_files_paths'])
+            )
+        )
+        semester_files_text.config(state=tk.DISABLED)
+    print(state_holder['semester_files_paths'])
 
 
 def get_new_separator(
@@ -115,6 +155,11 @@ def main() -> None:
 
     global SEMESTER_COUNT_COMBOBOX_VALUES
     semester_count_combobox = ttk.Combobox(root, values=SEMESTER_COUNT_COMBOBOX_VALUES, state="readonly")
+    semester_count_combobox.set('Не выбрано')
+    semester_count_combobox.bind(
+        "<<ComboboxSelected>>",
+        lambda e: on_semester_count_combobox_selected(semester_count_combobox)
+    )
     semester_count_combobox.grid(
         column=2,
         row=2,
@@ -149,7 +194,7 @@ def main() -> None:
         root,
         text='Выбор файлов',
         font=("Arial", 10),
-        command=lambda: 0,
+        command=lambda: push_semester_files_button(semester_files_text)
     )
     semester_files_button.grid(
         column=2,
