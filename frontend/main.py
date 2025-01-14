@@ -7,6 +7,7 @@ from typing import Any
 state_holder: dict[str, Any] = {
     'semester_files_count': None,
     'semester_files_paths': None,
+    'diploma_file_path': None,
 }
 
 GRID_COLUMNS_COUNT = 4
@@ -26,7 +27,7 @@ def push_semester_files_button(
 ):
     global state_holder
     file_paths = filedialog.askopenfilenames(
-        title='Выберите файлы зачётно-экзаменационных ведомостей в порядке их хронологического следования:',
+        title='Выберите файлы зачётно-экзаменационных ведомостей в порядке их хронологического следования',
         filetypes=[(
             "Файлы Excel",
             "*.xlsx"
@@ -39,13 +40,40 @@ def push_semester_files_button(
         semester_files_text.insert(
             '1.0',
             (
-                    'Выбранные файлы зачётно-экзаменационных ведомостей:\n'
-                    +
-                    '\n'.join(state_holder['semester_files_paths'])
+                'Выбранные файлы зачётно-экзаменационных ведомостей:\n'
+                +
+                '\n'.join(state_holder['semester_files_paths'])
             )
         )
         semester_files_text.config(state=tk.DISABLED)
-    print(state_holder['semester_files_paths'])
+
+
+def push_diplomas_file_button(
+        diploma_files_text: tk.Text,
+):
+    global state_holder
+    file_path = filedialog.askopenfilename(
+        title='Выберите файл с темами дипломных проектов',
+        filetypes=[(
+            "Файл Excel",
+            "*.xlsx"
+        ), ]
+    )
+    if file_path != '':
+        state_holder['diploma_file_path'] = file_path
+        diploma_files_text.config(state=tk.NORMAL)
+        diploma_files_text.delete('1.0', tk.END)
+        diploma_files_text.insert(
+            '1.0',
+            (
+                'Выбранный файл с темами дипломных проектов:\n'
+                +
+                state_holder['diploma_file_path']
+            )
+        )
+        diploma_files_text.config(state=tk.DISABLED)
+
+
 
 
 def get_new_separator(
@@ -245,7 +273,7 @@ def main() -> None:
         root,
         text='Выбор файла',
         font=("Arial", 10),
-        command=lambda: 0,
+        command=lambda: push_diplomas_file_button(diplomas_file_text),
     )
     diplomas_file_button.grid(
         column=2,
