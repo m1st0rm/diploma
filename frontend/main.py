@@ -4,10 +4,13 @@ from tkinter import messagebox
 from tkcalendar import DateEntry
 from typing import Any
 
+
 state_holder: dict[str, Any] = {
     'semester_files_count': None,
     'semester_files_paths': None,
     'diploma_file_path': None,
+    'template_file_path': None,
+    'save_directory_path': None,
 }
 
 GRID_COLUMNS_COUNT = 4
@@ -74,6 +77,53 @@ def push_diplomas_file_button(
         diploma_files_text.config(state=tk.DISABLED)
 
 
+def push_template_file_button(
+        template_file_text: tk.Text,
+):
+    global state_holder
+    file_path = filedialog.askopenfilename(
+        title='Выберите файл шаблона выписки',
+        filetypes=[(
+            "Файл Excel",
+            "*.xlsx"
+        ), ]
+    )
+    if file_path != '':
+        state_holder['template_file_path'] = file_path
+        template_file_text.config(state=tk.NORMAL)
+        template_file_text.delete('1.0', tk.END)
+        template_file_text.insert(
+            '1.0',
+            (
+                'Выбранный файл шаблона выписки:\n'
+                +
+                state_holder['template_file_path']
+            )
+        )
+        template_file_text.config(state=tk.DISABLED)
+
+
+def push_save_directory_button(
+        save_directory_text: tk.Text,
+):
+    global state_holder
+    directory_path = filedialog.askdirectory(
+        title='Выберите директорию сохранения выписок'
+    )
+    if directory_path != '':
+        state_holder['save_directory_path'] = directory_path
+        save_directory_text.config(state=tk.NORMAL)
+        save_directory_text.delete('1.0', tk.END)
+        save_directory_text.insert(
+            '1.0',
+            (
+                'Выбранная директория сохранения файлов:\n'
+                +
+                state_holder['save_directory_path']
+            )
+        )
+        save_directory_text.config(state=tk.DISABLED)
+        print(state_holder['save_directory_path'])
 
 
 def get_new_separator(
@@ -330,7 +380,7 @@ def main() -> None:
         root,
         text='Выбор файла',
         font=("Arial", 10),
-        command=lambda: 0,
+        command=lambda: push_template_file_button(template_file_text),
     )
     template_file_button.grid(
         column=2,
@@ -387,7 +437,7 @@ def main() -> None:
         root,
         text='Выбор директории',
         font=("Arial", 10),
-        command=lambda: 0,
+        command=lambda: push_save_directory_button(save_directory_text),
     )
     save_directory_button.grid(
         column=2,
