@@ -11,6 +11,10 @@ state_holder: dict[str, Any] = {
     'diploma_file_path': None,
     'template_file_path': None,
     'save_directory_path': None,
+    'speciality_name': None,
+    'speciality_code': None,
+    'speciality_area_name': None,
+    'speciality_area_code': None,
 }
 
 GRID_COLUMNS_COUNT = 4
@@ -19,7 +23,7 @@ SEMESTER_COUNT_COMBOBOX_VALUES = ('1', '2', '3', '4', '5', '6', '7', '8')
 
 def on_semester_count_combobox_selected(
         semester_count_combobox: ttk.Combobox,
-):
+) -> None:
     global state_holder
     files_count = int(semester_count_combobox.get())
     state_holder['semester_files_count'] = files_count
@@ -27,7 +31,7 @@ def on_semester_count_combobox_selected(
 
 def push_semester_files_button(
         semester_files_text: tk.Text,
-):
+) -> None:
     global state_holder
     file_paths = filedialog.askopenfilenames(
         title='Выберите файлы зачётно-экзаменационных ведомостей в порядке их хронологического следования',
@@ -53,7 +57,7 @@ def push_semester_files_button(
 
 def push_diplomas_file_button(
         diploma_files_text: tk.Text,
-):
+) -> None:
     global state_holder
     file_path = filedialog.askopenfilename(
         title='Выберите файл с темами дипломных проектов',
@@ -79,7 +83,7 @@ def push_diplomas_file_button(
 
 def push_template_file_button(
         template_file_text: tk.Text,
-):
+) -> None:
     global state_holder
     file_path = filedialog.askopenfilename(
         title='Выберите файл шаблона выписки',
@@ -105,7 +109,7 @@ def push_template_file_button(
 
 def push_save_directory_button(
         save_directory_text: tk.Text,
-):
+) -> None:
     global state_holder
     directory_path = filedialog.askdirectory(
         title='Выберите директорию сохранения выписок'
@@ -126,6 +130,18 @@ def push_save_directory_button(
         print(state_holder['save_directory_path'])
 
 
+def on_key_release_entry(
+        related_key: str,
+        entry: tk.Entry,
+) -> None:
+    global state_holder
+    if entry.get() == '':
+        state_holder[related_key] = None
+    else:
+        state_holder[related_key] = entry.get()
+    print(state_holder)
+
+
 def get_new_separator(
         root: tk.Frame,
 ) -> tk.Frame:
@@ -135,7 +151,7 @@ def get_new_separator(
 def _on_mouse_wheel(
         event: tk.Event,
         canvas: tk.Canvas,
-):
+) -> None:
     canvas.yview_scroll(
         -1 * (event.delta // 120),
         "units"
@@ -494,6 +510,10 @@ def main() -> None:
         root,
         font=("Arial", 10),
     )
+    speciality_name_entry.bind(
+        '<KeyRelease>',
+        lambda event: on_key_release_entry('speciality_name', speciality_name_entry)
+    )
     speciality_name_entry.grid(
         column=0,
         row=16,
@@ -520,6 +540,10 @@ def main() -> None:
     speciality_code_entry = tk.Entry(
         root,
         font=("Arial", 10),
+    )
+    speciality_code_entry.bind(
+        '<KeyRelease>',
+        lambda event: on_key_release_entry('speciality_code', speciality_code_entry)
     )
     speciality_code_entry.grid(
         column=0,
@@ -555,6 +579,10 @@ def main() -> None:
         root,
         font=("Arial", 10),
     )
+    speciality_area_name_entry.bind(
+        '<KeyRelease>',
+        lambda event: on_key_release_entry('speciality_area_name', speciality_area_name_entry)
+    )
     speciality_area_name_entry.grid(
         column=0,
         row=21,
@@ -581,6 +609,10 @@ def main() -> None:
     speciality_area_code_entry = tk.Entry(
         root,
         font=("Arial", 10),
+    )
+    speciality_area_code_entry.bind(
+        '<KeyRelease>',
+        lambda event: on_key_release_entry('speciality_area_code', speciality_area_code_entry)
     )
     speciality_area_code_entry.grid(
         column=0,
