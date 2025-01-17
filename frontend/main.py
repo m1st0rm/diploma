@@ -649,6 +649,7 @@ def main() -> None:
         date_pattern='DD-MM-YYYY',
         locale='ru'
     )
+    start_date_dateentry.delete(0, tk.END)
     start_date_dateentry.grid(
         column=0,
         row=26,
@@ -677,6 +678,7 @@ def main() -> None:
         date_pattern='DD-MM-YYYY',
         locale='ru'
     )
+    end_date_dateentry.delete(0, tk.END)
     end_date_dateentry.grid(
         column=0,
         row=28,
@@ -712,6 +714,7 @@ def main() -> None:
         date_pattern='DD-MM-YYYY',
         locale='ru'
     )
+    statement_date_dateentry.delete(0, tk.END)
     statement_date_dateentry.grid(
         column=0,
         row=31,
