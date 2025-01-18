@@ -3,6 +3,7 @@ from tkinter import filedialog, ttk
 from tkinter import messagebox
 from tkcalendar import DateEntry
 from typing import Any
+from datetime import date
 
 
 state_holder: dict[str, Any] = {
@@ -15,6 +16,9 @@ state_holder: dict[str, Any] = {
     'speciality_code': None,
     'speciality_area_name': None,
     'speciality_area_code': None,
+    'start_date': date.today(),
+    'end_date': date.today(),
+    'statement_date': date.today(),
 }
 
 GRID_COLUMNS_COUNT = 4
@@ -127,7 +131,6 @@ def push_save_directory_button(
             )
         )
         save_directory_text.config(state=tk.DISABLED)
-        print(state_holder['save_directory_path'])
 
 
 def on_key_release_entry(
@@ -139,6 +142,17 @@ def on_key_release_entry(
         state_holder[related_key] = None
     else:
         state_holder[related_key] = entry.get()
+
+
+def on_date_entry_selected(
+        related_key: str,
+        dateentry: DateEntry,
+) -> None:
+    global state_holder
+    if dateentry.get() == '':
+        state_holder[related_key] = None
+    else:
+        state_holder[related_key] = dateentry.get_date()
     print(state_holder)
 
 
@@ -647,9 +661,13 @@ def main() -> None:
     start_date_dateentry = DateEntry(
         root,
         date_pattern='DD-MM-YYYY',
-        locale='ru'
+        locale='ru',
+        state='readonly'
     )
-    start_date_dateentry.delete(0, tk.END)
+    start_date_dateentry.bind(
+        '<<DateEntrySelected>>',
+        lambda event: on_date_entry_selected('start_date', start_date_dateentry)
+    )
     start_date_dateentry.grid(
         column=0,
         row=26,
@@ -676,9 +694,13 @@ def main() -> None:
     end_date_dateentry = DateEntry(
         root,
         date_pattern='DD-MM-YYYY',
-        locale='ru'
+        locale='ru',
+        state='readonly'
     )
-    end_date_dateentry.delete(0, tk.END)
+    end_date_dateentry.bind(
+        '<<DateEntrySelected>>',
+        lambda event: on_date_entry_selected('end_date', end_date_dateentry)
+    )
     end_date_dateentry.grid(
         column=0,
         row=28,
@@ -712,9 +734,13 @@ def main() -> None:
     statement_date_dateentry = DateEntry(
         root,
         date_pattern='DD-MM-YYYY',
-        locale='ru'
+        locale='ru',
+        state='readonly'
     )
-    statement_date_dateentry.delete(0, tk.END)
+    statement_date_dateentry.bind(
+        '<<DateEntrySelected>>',
+        lambda event: on_date_entry_selected('statement_date', statement_date_dateentry)
+    )
     statement_date_dateentry.grid(
         column=0,
         row=31,
@@ -745,7 +771,6 @@ def main() -> None:
         pady=5,
         sticky=tk.EW
     )
-
     root.mainloop()
 
 
