@@ -23,7 +23,7 @@ state_holder: dict[str, Any] = {
 }
 
 GRID_COLUMNS_COUNT = 4
-SEMESTER_COUNT_COMBOBOX_VALUES = ('1', '2', '3', '4', '5', '6', '7', '8')
+SEMESTER_COUNT_COMBOBOX_VALUES = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
 
 
 def on_semester_count_combobox_selected(
@@ -205,6 +205,7 @@ def on_key_release_entry(
         state_holder[related_key] = None
     else:
         state_holder[related_key] = entry.get()
+    print(state_holder)
 
 
 def on_date_entry_selected(
@@ -216,6 +217,25 @@ def on_date_entry_selected(
         state_holder[related_key] = None
     else:
         state_holder[related_key] = dateentry.get_date()
+
+
+def push_make_statements_button() -> None:
+    global state_holder
+
+    if any(state is None for state in state_holder.values()):
+        messagebox.showerror(
+            title='Ошибка',
+            message='Одно или несколько полей не заполнены!'
+        )
+        return
+
+    if len(state_holder['semester_files_paths']) != state_holder['semester_files_paths']:
+        messagebox.showerror(
+            title='Ошибка',
+            message='Количество выбранных файлов зачётно-экзаменационных ведомостей '
+                    'и выбранное количество зачётно-экзаменационных ведомостей не совпадают!'
+        )
+        return
 
 
 def get_new_separator(
