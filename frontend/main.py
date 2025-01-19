@@ -67,7 +67,10 @@ def push_semester_files_button(
         semester_files_listbox.config(state=tk.NORMAL)
         semester_files_listbox.delete(0, tk.END)
         for file_path in file_paths:
-            semester_files_listbox.insert(tk.END, file_path)
+            semester_files_listbox.insert(
+                tk.END,
+                file_path
+            )
         semester_files_button_up.config(state=tk.NORMAL)
         semester_files_button_down.config(state=tk.NORMAL)
 
