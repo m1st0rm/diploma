@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, ttk
 from tkinter import messagebox
+import os
 from tkcalendar import DateEntry
 from typing import Any
 from datetime import date
@@ -34,29 +35,82 @@ def on_semester_count_combobox_selected(
 
 
 def push_semester_files_button(
-        semester_files_text: tk.Text,
+        semester_files_listbox: tk.Listbox,
+        semester_files_button_up: tk.Button,
+        semester_files_button_down: tk.Button,
 ) -> None:
     global state_holder
     file_paths = filedialog.askopenfilenames(
-        title='Выберите файлы зачётно-экзаменационных ведомостей в порядке их хронологического следования',
+        title='Выберите файлы зачётно-экзаменационных ведомостей',
         filetypes=[(
             "Файлы Excel",
             "*.xlsx"
         ), ]
+
     )
     if len(file_paths) != 0:
-        state_holder['semester_files_paths'] = file_paths
-        semester_files_text.config(state=tk.NORMAL)
-        semester_files_text.delete('1.0', tk.END)
-        semester_files_text.insert(
-            '1.0',
-            (
-                'Выбранные файлы зачётно-экзаменационных ведомостей:\n'
-                +
-                '\n'.join(state_holder['semester_files_paths'])
+        if not all(os.path.exists(file_path) for file_path in file_paths):
+            messagebox.showerror(
+                title='Ошибка',
+                message='Одного или нескольких выбранных файлов не существует!'
             )
-        )
-        semester_files_text.config(state=tk.DISABLED)
+            return
+
+        state_holder['semester_files_paths'] = list(file_paths)
+        semester_files_listbox.config(state=tk.NORMAL)
+        semester_files_listbox.delete(0, tk.END)
+        for file_path in file_paths:
+            semester_files_listbox.insert(tk.END, file_path)
+        semester_files_button_up.config(state=tk.NORMAL)
+        semester_files_button_down.config(state=tk.NORMAL)
+
+
+def push_semester_files_button_up(
+        semester_files_listbox: tk.Listbox,
+) -> None:
+    global state_holder
+    selected_indeces = semester_files_listbox.curselection()
+    if not selected_indeces:
+        return
+
+    selected_index = selected_indeces[0]
+    if selected_index == 0:
+        return
+
+    selected_file_path = state_holder['semester_files_paths'][selected_index]
+    semester_files_listbox.delete(selected_index)
+    semester_files_listbox.insert(
+        selected_index-1,
+        selected_file_path
+    )
+    semester_files_listbox.selection_set(selected_index-1)
+
+    state_holder['semester_files_paths'][selected_index], state_holder['semester_files_paths'][selected_index - 1] \
+        = state_holder['semester_files_paths'][selected_index - 1], state_holder['semester_files_paths'][selected_index]
+
+
+def push_semester_files_button_down(
+        semester_files_listbox: tk.Listbox,
+) -> None:
+    global state_holder
+    selected_indeces = semester_files_listbox.curselection()
+    if not selected_indeces:
+        return
+
+    selected_index = selected_indeces[0]
+    if selected_index == (semester_files_listbox.size() - 1):
+        return
+
+    selected_file_path = state_holder['semester_files_paths'][selected_index]
+    semester_files_listbox.delete(selected_index)
+    semester_files_listbox.insert(
+        selected_index + 1,
+        selected_file_path
+    )
+    semester_files_listbox.selection_set(selected_index + 1)
+
+    state_holder['semester_files_paths'][selected_index], state_holder['semester_files_paths'][selected_index + 1] \
+        = state_holder['semester_files_paths'][selected_index + 1], state_holder['semester_files_paths'][selected_index]
 
 
 def push_diplomas_file_button(
@@ -71,16 +125,19 @@ def push_diplomas_file_button(
         ), ]
     )
     if file_path != '':
+        if not os.path.exists(file_path):
+            messagebox.showerror(
+                title='Ошибка',
+                message='Выбранного файла не существует!'
+            )
+            return
+
         state_holder['diploma_file_path'] = file_path
         diploma_files_text.config(state=tk.NORMAL)
         diploma_files_text.delete('1.0', tk.END)
         diploma_files_text.insert(
             '1.0',
-            (
-                'Выбранный файл с темами дипломных проектов:\n'
-                +
-                state_holder['diploma_file_path']
-            )
+            state_holder['diploma_file_path']
         )
         diploma_files_text.config(state=tk.DISABLED)
 
@@ -97,16 +154,19 @@ def push_template_file_button(
         ), ]
     )
     if file_path != '':
+        if not os.path.exists(file_path):
+            messagebox.showerror(
+                title='Ошибка',
+                message='Выбранного файла не существует!'
+            )
+            return
+
         state_holder['template_file_path'] = file_path
         template_file_text.config(state=tk.NORMAL)
         template_file_text.delete('1.0', tk.END)
         template_file_text.insert(
             '1.0',
-            (
-                'Выбранный файл шаблона выписки:\n'
-                +
-                state_holder['template_file_path']
-            )
+            state_holder['template_file_path']
         )
         template_file_text.config(state=tk.DISABLED)
 
@@ -119,16 +179,19 @@ def push_save_directory_button(
         title='Выберите директорию сохранения выписок'
     )
     if directory_path != '':
+        if not os.path.exists(directory_path):
+            messagebox.showerror(
+                title='Ошибка',
+                message='Выбранной директории не существует!'
+            )
+            return
+
         state_holder['save_directory_path'] = directory_path
         save_directory_text.config(state=tk.NORMAL)
         save_directory_text.delete('1.0', tk.END)
         save_directory_text.insert(
             '1.0',
-            (
-                'Выбранная директория сохранения файлов:\n'
-                +
-                state_holder['save_directory_path']
-            )
+            state_holder['save_directory_path']
         )
         save_directory_text.config(state=tk.DISABLED)
 
@@ -153,7 +216,6 @@ def on_date_entry_selected(
         state_holder[related_key] = None
     else:
         state_holder[related_key] = dateentry.get_date()
-    print(state_holder)
 
 
 def get_new_separator(
@@ -175,7 +237,7 @@ def _on_mouse_wheel(
 def main() -> None:
     main_window = tk.Tk()
     main_window.title("Программное средство для формирования выписки из зачётно-экзаменационной ведомости")
-    main_window.geometry("800x800")
+    main_window.geometry("888x800")
     main_window.resizable(
         width=False,
         height=False
@@ -286,7 +348,8 @@ def main() -> None:
 
     semester_files_label = tk.Label(
         root,
-        text="Выберите файлы зачётно-экзаменационных ведомостей в порядке их хронологического следования:",
+        text="Выберите файлы зачётно-экзаменационных ведомостей и "
+             "расположите их в порядке хронологического следования:",
         font=("Arial", 10)
     )
     semester_files_label.grid(
@@ -302,7 +365,11 @@ def main() -> None:
         root,
         text='Выбор файлов',
         font=("Arial", 10),
-        command=lambda: push_semester_files_button(semester_files_text)
+        command=lambda: push_semester_files_button(
+            semester_files_listbox,
+            semester_files_button_up,
+            semester_files_button_down
+        )
     )
     semester_files_button.grid(
         column=2,
@@ -313,24 +380,56 @@ def main() -> None:
         sticky=tk.EW
     )
 
-    semester_files_text = tk.Text(
+    semester_files_listbox = tk.Listbox(
         root,
         height=10,
         width=50,
         font=("Arial", 10),
-        wrap=tk.WORD,
+        selectmode=tk.SINGLE,
+        activestyle=tk.NONE
     )
-    semester_files_text.insert(
-        '1.0',
+    semester_files_listbox.insert(
+        tk.END,
         'Файлы зачётно-экзаменационных ведомостей не выбраны...'
     )
-    semester_files_text.config(state=tk.DISABLED)
-    semester_files_text.grid(
+    semester_files_listbox.config(state=tk.DISABLED)
+    semester_files_listbox.grid(
         column=0,
         row=5,
         padx=5,
         pady=5,
-        columnspan=4,
+        columnspan=3,
+        rowspan=2,
+        sticky=tk.EW
+    )
+
+    semester_files_button_up = tk.Button(
+        root,
+        text='Вверх',
+        font=("Arial", 10),
+        state=tk.DISABLED,
+        command=lambda: push_semester_files_button_up(semester_files_listbox),
+    )
+    semester_files_button_up.grid(
+        column=3,
+        row=5,
+        padx=5,
+        pady=5,
+        sticky=tk.EW
+    )
+
+    semester_files_button_down = tk.Button(
+        root,
+        text='Вниз',
+        font=("Arial", 10),
+        state=tk.DISABLED,
+        command=lambda: push_semester_files_button_down(semester_files_listbox),
+    )
+    semester_files_button_down.grid(
+        column=3,
+        row=6,
+        padx=5,
+        pady=5,
         sticky=tk.EW
     )
 
@@ -342,7 +441,7 @@ def main() -> None:
 
     diplomas_file_label.grid(
         column=0,
-        row=6,
+        row=7,
         columnspan=2,
         padx=5,
         pady=5,
@@ -357,7 +456,7 @@ def main() -> None:
     )
     diplomas_file_button.grid(
         column=2,
-        row=6,
+        row=7,
         columnspan=2,
         padx=5,
         pady=5,
@@ -378,7 +477,7 @@ def main() -> None:
     diplomas_file_text.config(state=tk.DISABLED)
     diplomas_file_text.grid(
         column=0,
-        row=7,
+        row=8,
         padx=5,
         pady=5,
         columnspan=4,
@@ -387,7 +486,7 @@ def main() -> None:
 
     get_new_separator(root).grid(
         column=0,
-        row=8,
+        row=9,
         columnspan=4,
         sticky=tk.EW
     )
@@ -399,7 +498,7 @@ def main() -> None:
     )
     template_file_label.grid(
         column=0,
-        row=9,
+        row=10,
         columnspan=2,
         padx=5,
         pady=5,
@@ -414,7 +513,7 @@ def main() -> None:
     )
     template_file_button.grid(
         column=2,
-        row=9,
+        row=10,
         columnspan=2,
         padx=5,
         pady=5,
@@ -435,7 +534,7 @@ def main() -> None:
     template_file_text.config(state=tk.DISABLED)
     template_file_text.grid(
         column=0,
-        row=10,
+        row=11,
         padx=5,
         pady=5,
         columnspan=4,
@@ -444,7 +543,7 @@ def main() -> None:
 
     get_new_separator(root).grid(
         column=0,
-        row=11,
+        row=12,
         columnspan=4,
         sticky=tk.EW
     )
@@ -456,7 +555,7 @@ def main() -> None:
     )
     save_directory_label.grid(
         column=0,
-        row=12,
+        row=13,
         columnspan=2,
         padx=5,
         pady=5,
@@ -471,7 +570,7 @@ def main() -> None:
     )
     save_directory_button.grid(
         column=2,
-        row=12,
+        row=13,
         columnspan=2,
         padx=5,
         pady=5,
@@ -492,7 +591,7 @@ def main() -> None:
     save_directory_text.config(state=tk.DISABLED)
     save_directory_text.grid(
         column=0,
-        row=13,
+        row=14,
         padx=5,
         pady=5,
         columnspan=4,
@@ -501,7 +600,7 @@ def main() -> None:
 
     get_new_separator(root).grid(
         column=0,
-        row=14,
+        row=15,
         columnspan=4,
         sticky=tk.EW
     )
@@ -513,7 +612,7 @@ def main() -> None:
     )
     speciality_name_label.grid(
         column=0,
-        row=15,
+        row=16,
         columnspan=4,
         padx=5,
         pady=5,
@@ -530,7 +629,7 @@ def main() -> None:
     )
     speciality_name_entry.grid(
         column=0,
-        row=16,
+        row=17,
         columnspan=4,
         padx=5,
         pady=5,
@@ -544,7 +643,7 @@ def main() -> None:
     )
     speciality_code_label.grid(
         column=0,
-        row=17,
+        row=18,
         columnspan=4,
         padx=5,
         pady=5,
@@ -561,7 +660,7 @@ def main() -> None:
     )
     speciality_code_entry.grid(
         column=0,
-        row=18,
+        row=19,
         columnspan=4,
         padx=5,
         pady=5,
@@ -570,7 +669,7 @@ def main() -> None:
 
     get_new_separator(root).grid(
         column=0,
-        row=19,
+        row=20,
         columnspan=4,
         sticky=tk.EW
     )
@@ -582,7 +681,7 @@ def main() -> None:
     )
     speciality_area_name_label.grid(
         column=0,
-        row=20,
+        row=21,
         columnspan=4,
         padx=5,
         pady=5,
@@ -599,7 +698,7 @@ def main() -> None:
     )
     speciality_area_name_entry.grid(
         column=0,
-        row=21,
+        row=22,
         columnspan=4,
         padx=5,
         pady=5,
@@ -613,7 +712,7 @@ def main() -> None:
     )
     speciality_area_code_label.grid(
         column=0,
-        row=22,
+        row=23,
         columnspan=4,
         padx=5,
         pady=5,
@@ -630,7 +729,7 @@ def main() -> None:
     )
     speciality_area_code_entry.grid(
         column=0,
-        row=23,
+        row=24,
         columnspan=4,
         padx=5,
         pady=5,
@@ -639,7 +738,7 @@ def main() -> None:
 
     get_new_separator(root).grid(
         column=0,
-        row=24,
+        row=25,
         columnspan=4,
         sticky=tk.EW
     )
@@ -651,7 +750,7 @@ def main() -> None:
     )
     start_date_label.grid(
         column=0,
-        row=25,
+        row=26,
         columnspan=4,
         padx=5,
         pady=5,
@@ -670,7 +769,7 @@ def main() -> None:
     )
     start_date_dateentry.grid(
         column=0,
-        row=26,
+        row=27,
         columnspan=4,
         padx=5,
         pady=5,
@@ -684,7 +783,7 @@ def main() -> None:
     )
     end_date_label.grid(
         column=0,
-        row=27,
+        row=28,
         columnspan=4,
         padx=5,
         pady=5,
@@ -703,7 +802,7 @@ def main() -> None:
     )
     end_date_dateentry.grid(
         column=0,
-        row=28,
+        row=29,
         columnspan=4,
         padx=5,
         pady=5,
@@ -712,7 +811,7 @@ def main() -> None:
 
     get_new_separator(root).grid(
         column=0,
-        row=29,
+        row=30,
         columnspan=4,
         sticky=tk.EW
     )
@@ -724,7 +823,7 @@ def main() -> None:
     )
     statement_date_label.grid(
         column=0,
-        row=30,
+        row=31,
         columnspan=4,
         padx=5,
         pady=5,
@@ -743,7 +842,7 @@ def main() -> None:
     )
     statement_date_dateentry.grid(
         column=0,
-        row=31,
+        row=32,
         columnspan=4,
         padx=5,
         pady=5,
@@ -752,7 +851,7 @@ def main() -> None:
 
     get_new_separator(root).grid(
         column=0,
-        row=32,
+        row=33,
         columnspan=4,
         sticky=tk.EW
     )
@@ -765,7 +864,7 @@ def main() -> None:
     )
     make_statements_button.grid(
         column=0,
-        row=33,
+        row=34,
         columnspan=4,
         padx=5,
         pady=5,
