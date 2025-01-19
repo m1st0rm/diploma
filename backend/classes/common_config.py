@@ -23,10 +23,10 @@ class CommonConfig:
        end_date_day: The ending day of the study period.
        end_date_month: The ending month of the study period.
        end_date_year: The ending year of the study period.
-       specialty_code: The code of the student's specialty.
-       specialty_name: The full name of the student's specialty.
-       specialty_area_code: The code of the specialty area or direction.
-       specialty_area_name: The full name of the specialty area or direction.
+       speciality_code: The code of the student's specialty.
+       speciality_name: The full name of the student's specialty.
+       speciality_area_code: The code of the specialty area or direction.
+       speciality_area_name: The full name of the specialty area or direction.
        statement_date_day: The day of the statement generation.
        statement_date_month: The month of the statement generation.
        statement_date_year: The year of the statement generation.
@@ -37,10 +37,10 @@ class CommonConfig:
     end_date_day: str
     end_date_month: str
     end_date_year: str
-    specialty_code: str
-    specialty_name: str
-    specialty_area_code: str
-    specialty_area_name: str
+    speciality_code: str
+    speciality_name: str
+    speciality_area_code: str
+    speciality_area_name: str
     statement_date_day: str
     statement_date_month: str
     statement_date_year: str

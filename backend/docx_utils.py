@@ -69,7 +69,7 @@ def build_docx(
     paragraph_3.clear()
     run_3_1 = paragraph_3.add_run(f"по специальности ")
     run_3_1.font.size = Pt(12)
-    run_3_2 = paragraph_3.add_run(f"{common_config.specialty_code} «{common_config.specialty_name}»")
+    run_3_2 = paragraph_3.add_run(f"{common_config.speciality_code} «{common_config.speciality_name}»")
     run_3_2.font.size = Pt(12)
     run_3_2.underline = True
 
@@ -77,7 +77,7 @@ def build_docx(
     paragraph_4.clear()
     run_4_1 = paragraph_4.add_run(f"направлению специальности ")
     run_4_1.font.size = Pt(12)
-    run_4_2 = paragraph_4.add_run(f"{common_config.specialty_area_code} «{common_config.specialty_area_name}»")
+    run_4_2 = paragraph_4.add_run(f"{common_config.speciality_area_code} «{common_config.speciality_area_name}»")
     run_4_2.font.size = Pt(12)
     run_4_2.underline = True
 

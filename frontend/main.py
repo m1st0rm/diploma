@@ -5,6 +5,7 @@ import os
 from tkcalendar import DateEntry
 from typing import Any
 from datetime import date
+from backend.runtime import runtime
 
 
 state_holder: dict[str, Any] = {
@@ -24,6 +25,12 @@ state_holder: dict[str, Any] = {
 
 GRID_COLUMNS_COUNT = 4
 SEMESTER_COUNT_COMBOBOX_VALUES = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
+RUNTIME_RET_CODES = {
+    1: 'Некорректный формат файлов зачётно-экзаменационных ведомостей!',
+    2: 'Некорректный формат файла с темами дипломных проектов!',
+    3: 'Некорректный формат файла шаблона выписки или перезаписываемый файл октрыт!',
+    4: 'Выписки успешно сформированы!'
+}
 
 
 def on_semester_count_combobox_selected(
@@ -149,8 +156,8 @@ def push_template_file_button(
     file_path = filedialog.askopenfilename(
         title='Выберите файл шаблона выписки',
         filetypes=[(
-            "Файл Excel",
-            "*.xlsx"
+            "Файл Word",
+            "*.docx"
         ), ]
     )
     if file_path != '':
@@ -220,7 +227,7 @@ def on_date_entry_selected(
 
 
 def push_make_statements_button() -> None:
-    global state_holder
+    global state_holder, RUNTIME_RET_CODES
 
     if any(state is None for state in state_holder.values()):
         messagebox.showerror(
@@ -236,6 +243,19 @@ def push_make_statements_button() -> None:
                     'и выбранное количество зачётно-экзаменационных ведомостей не совпадают!'
         )
         return
+
+    ret_code = runtime(state_holder)
+
+    if ret_code in [1, 2, 3]:
+        messagebox.showerror(
+            title='Ошибка',
+            message=RUNTIME_RET_CODES[ret_code]
+        )
+    else:
+        messagebox.showinfo(
+            title='Успех',
+            message=RUNTIME_RET_CODES[ret_code]
+        )
 
 
 def get_new_separator(
