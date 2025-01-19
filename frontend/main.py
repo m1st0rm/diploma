@@ -229,7 +229,7 @@ def push_make_statements_button() -> None:
         )
         return
 
-    if len(state_holder['semester_files_paths']) != state_holder['semester_files_paths']:
+    if len(state_holder['semester_files_paths']) != state_holder['semester_files_count']:
         messagebox.showerror(
             title='Ошибка',
             message='Количество выбранных файлов зачётно-экзаменационных ведомостей '
@@ -880,7 +880,7 @@ def main() -> None:
         root,
         text='Выполнить формирование выписок',
         font=("Arial", 12),
-        command=lambda: 0,
+        command=lambda: push_make_statements_button(),
     )
     make_statements_button.grid(
         column=0,
