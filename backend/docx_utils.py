@@ -52,7 +52,7 @@ def build_docx(
 
     paragraph_2 = document.paragraphs[10]
     paragraph_2.clear()
-    run_2_1 = paragraph_2.add_run(f"с {common_config.start_date_year} {common_config.start_date_month} 20")
+    run_2_1 = paragraph_2.add_run(f"с {common_config.start_date_day} {common_config.start_date_month} 20")
     run_2_1.font.size = Pt(12)
     run_2_2 = paragraph_2.add_run(f"{common_config.start_date_year}")
     run_2_2.font.size = Pt(12)

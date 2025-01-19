@@ -212,7 +212,6 @@ def on_key_release_entry(
         state_holder[related_key] = None
     else:
         state_holder[related_key] = entry.get()
-    print(state_holder)
 
 
 def on_date_entry_selected(
