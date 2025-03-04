@@ -58,3 +58,15 @@ Represents summarized discipline configurations grouped by categories.
     - Inner key: Discipline category (e.g., 'regular', 'practice', etc.).
     - Inner value: List of summarized DisciplineConfig objects.
 """
+
+
+STUDENTS_WITH_AVG_MARK_TYPE = tuple[tuple[str, float], ...]
+"""
+STUDENTS_WITH_AVG_MARK_TYPE: A tuple containing multiple tuples of student names and their average marks.
+
+- Outer tuple: Represents multiple student records.
+- Inner tuple:
+    - First element: Student's full name (str).
+    - Second element: Average mark (float).
+"""
+
