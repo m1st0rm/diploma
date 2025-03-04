@@ -307,10 +307,18 @@ def get_students_configs(
 def get_students_with_avg_mark(
         students_stats_with_discipline_configs: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE
 ) -> STUDENTS_WITH_AVG_MARK_TYPE:
+    """
+    Calculates the average mark for each student and sorts them in descending order.
+
+    :param students_stats_with_discipline_configs: A dictionary mapping student names to their discipline configurations.
+    :type students_stats_with_discipline_configs: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE
+    :return: A sorted tuple of student names with their average marks, from highest to lowest.
+    :rtype: STUDENTS_WITH_AVG_MARK_TYPE
+    """
     students_with_avg_mark = []
     for student_full_name, stats_discipline_configs in students_stats_with_discipline_configs.items():
         student_marks = [stats_discipline_config.mark for stats_discipline_config in stats_discipline_configs if isinstance(stats_discipline_config.mark, int)]
         avg_mark = sum(student_marks) / len(student_marks) if student_marks else 0
         students_with_avg_mark.append((student_full_name, avg_mark))
 
-    return tuple(students_with_avg_mark)
+    return tuple(sorted(students_with_avg_mark, key=lambda x: x[1], reverse=True))
