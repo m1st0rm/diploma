@@ -6,6 +6,7 @@ This module provides functions to:
 2. Group and summarize discipline configurations by categories such as regular, course work, course project, and practice.
 3. Map disciplines to formatted outputs suitable for student reports.
 4. Generate final student configurations, including diploma themes and structured discipline data.
+5. Calculate and sort students by their average marks.
 
 Functions:
 - get_students_stats_with_discipline_configs: Transforms raw statistics into discipline configurations.
@@ -13,6 +14,7 @@ Functions:
 - get_students_stats_with_discipline_configs_grouped_by_category_summarized: Summarizes disciplines by name.
 - get_disciplines_for_student_config: Formats disciplines for output.
 - get_students_configs: Generates a list of structured student configurations.
+- get_students_with_avg_mark: Computes and sorts students by average mark.
 
 Dependencies:
 - pandas: For data manipulation.
@@ -20,6 +22,7 @@ Dependencies:
 - backend.classes.discipline_config: Discipline configuration class.
 - backend.classes.student_config: Student configuration class.
 """
+
 
 from backend.custom_typing import (
     STUDENTS_STATS_RAW_TYPE,
