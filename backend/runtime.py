@@ -53,6 +53,8 @@ def runtime(
 
         data_with_configs = data_utils.get_students_stats_with_discipline_configs(non_aggregated_data)
 
+        data_with_avg_marks = data_utils.get_students_with_avg_mark(data_with_configs)
+
         data_with_grouped_configs = data_utils.get_students_stats_with_discipline_configs_grouped_by_category(
             data_with_configs)
 
@@ -94,6 +96,10 @@ def runtime(
             state_holder['save_directory_path'],
             data_ready,
             common_config
+        )
+        pandas_utils.make_students_with_avg_mark_xlsx_file(
+            data_with_avg_marks,
+            state_holder['save_directory_path']
         )
     except Exception:
         return 3
