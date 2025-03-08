@@ -1,23 +1,21 @@
 import pandas as pd
-from backend.pandas_utils import read_xlsx, map_dfs_columns, join_dfs, get_students_stats_raw
 import pytest
+
+from backend.pandas_utils import get_students_stats_raw, join_dfs, map_dfs_columns, read_xlsx
 
 
 @pytest.fixture
 def sample_dataframe_1():
-    return pd.DataFrame({
-        "ФИО": ["Иванов Иван", "Петров Петр"],
-        "Математика": [5, 4],
-        "Физика": [3, 4]
-    })
+    return pd.DataFrame(
+        {"ФИО": ["Иванов Иван", "Петров Петр"], "Математика": [5, 4], "Физика": [3, 4]}
+    )
+
 
 @pytest.fixture
 def sample_dataframe_2():
-    return pd.DataFrame({
-        "ФИО": ["Иванов Иван", "Петров Петр"],
-        "Химия": [5, 5],
-        "Информатика": [4, 3]
-    })
+    return pd.DataFrame(
+        {"ФИО": ["Иванов Иван", "Петров Петр"], "Химия": [5, 5], "Информатика": [4, 3]}
+    )
 
 
 def test_read_xlsx(monkeypatch):
@@ -59,7 +57,7 @@ def test_get_students_stats_raw(sample_dataframe_1):
 
     expected_output = [
         {'Иванов Иван': {'Математика': 5, 'Физика': 3}},
-        {'Петров Петр': {'Математика': 4, 'Физика': 4}}
+        {'Петров Петр': {'Математика': 4, 'Физика': 4}},
     ]
 
     assert isinstance(result, list)

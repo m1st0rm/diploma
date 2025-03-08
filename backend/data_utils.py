@@ -23,19 +23,20 @@ Dependencies:
 - backend.classes.student_config: Student configuration class.
 """
 
+from collections import defaultdict
+from copy import deepcopy
 
-from backend.custom_typing import (
-    STUDENTS_STATS_RAW_TYPE,
-    STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE,
-    STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE,
-    STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE,
-    STUDENTS_WITH_AVG_MARK_TYPE,
-)
+from pandas import DataFrame
+
 from backend.classes.discipline_config import DisciplineConfig
 from backend.classes.student_config import StudentConfig
-from copy import deepcopy
-from collections import defaultdict
-from pandas import DataFrame
+from backend.custom_typing import (
+    STUDENTS_STATS_RAW_TYPE,
+    STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE,
+    STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE,
+    STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE,
+    STUDENTS_WITH_AVG_MARK_TYPE,
+)
 
 PRACTICE_ABBREVIATION = 'ПР'
 COURSE_PROJECT_ABBREVIATION = 'КП'
@@ -63,12 +64,12 @@ MARKS_MAPPING = {
     8: 'восемь',
     9: 'девять',
     10: 'десять',
-    'зч': 'зачтено'
+    'зч': 'зачтено',
 }
 
 
 def get_students_stats_with_discipline_configs(
-        students_stats: STUDENTS_STATS_RAW_TYPE
+    students_stats: STUDENTS_STATS_RAW_TYPE,
 ) -> STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE:
     """
     Transforms raw student statistics into structured discipline configurations.
@@ -105,7 +106,7 @@ def get_students_stats_with_discipline_configs(
                     discipline_mark,
                     discipline_study_hours,
                     discipline_credits_number,
-                    discipline_category
+                    discipline_category,
                 )
                 discipline_configs.append(discipline_config)
             students_stats_with_discipline_configs[student_full_name] = discipline_configs
@@ -114,7 +115,7 @@ def get_students_stats_with_discipline_configs(
 
 
 def get_students_stats_with_discipline_configs_grouped_by_category(
-        students_stats_with_discipline_configs: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE
+    students_stats_with_discipline_configs: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE,
 ) -> STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE:
     """
     Groups student discipline configurations into predefined categories.
@@ -125,38 +126,55 @@ def get_students_stats_with_discipline_configs_grouped_by_category(
     :rtype: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE
     """
     students_stats_with_discipline_configs_grouped_by_category = {}
-    categories = (REGULAR_CATEGORY, COURSE_WORK_CATEGORY, COURSE_PROJECT_CATEGORY, PRACTICE_CATEGORY)
-    for student_full_name, stats_discipline_configs in students_stats_with_discipline_configs.items():
+    categories = (
+        REGULAR_CATEGORY,
+        COURSE_WORK_CATEGORY,
+        COURSE_PROJECT_CATEGORY,
+        PRACTICE_CATEGORY,
+    )
+    for (
+        student_full_name,
+        stats_discipline_configs,
+    ) in students_stats_with_discipline_configs.items():
         discipline_configs_grouped_by_category = {
             REGULAR_CATEGORY: [],
             COURSE_WORK_CATEGORY: [],
             COURSE_PROJECT_CATEGORY: [],
-            PRACTICE_CATEGORY: []
+            PRACTICE_CATEGORY: [],
         }
 
         for stats_discipline_config in stats_discipline_configs:
             if stats_discipline_config.categoty == PRACTICE_CATEGORY:
-                discipline_configs_grouped_by_category[PRACTICE_CATEGORY].append(stats_discipline_config)
+                discipline_configs_grouped_by_category[PRACTICE_CATEGORY].append(
+                    stats_discipline_config
+                )
             elif stats_discipline_config.categoty == COURSE_WORK_CATEGORY:
-                discipline_configs_grouped_by_category[COURSE_WORK_CATEGORY].append(stats_discipline_config)
+                discipline_configs_grouped_by_category[COURSE_WORK_CATEGORY].append(
+                    stats_discipline_config
+                )
             elif stats_discipline_config.categoty == COURSE_PROJECT_CATEGORY:
-                discipline_configs_grouped_by_category[COURSE_PROJECT_CATEGORY].append(stats_discipline_config)
+                discipline_configs_grouped_by_category[COURSE_PROJECT_CATEGORY].append(
+                    stats_discipline_config
+                )
             else:
-                discipline_configs_grouped_by_category[REGULAR_CATEGORY].append(stats_discipline_config)
+                discipline_configs_grouped_by_category[REGULAR_CATEGORY].append(
+                    stats_discipline_config
+                )
 
         for category in categories:
             discipline_configs_grouped_by_category[category].sort(
-                key=lambda discipline_config: discipline_config.semester)
+                key=lambda discipline_config: discipline_config.semester
+            )
 
-        students_stats_with_discipline_configs_grouped_by_category[
-            student_full_name] = discipline_configs_grouped_by_category
+        students_stats_with_discipline_configs_grouped_by_category[student_full_name] = (
+            discipline_configs_grouped_by_category
+        )
 
     return students_stats_with_discipline_configs_grouped_by_category
 
 
 def get_students_stats_with_discipline_configs_grouped_by_category_summarized(
-        students_stats_with_discipline_configs_grouped_by_category:
-        STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE,
+    students_stats_with_discipline_configs_grouped_by_category: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE,
 ) -> STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE:
     """
     Summarizes regular disciplines grouped by name, combining marks, hours, and credits.
@@ -167,10 +185,13 @@ def get_students_stats_with_discipline_configs_grouped_by_category_summarized(
     :rtype: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE
     """
     students_stats_with_discipline_configs_grouped_by_category_summarized = deepcopy(
-        students_stats_with_discipline_configs_grouped_by_category)
+        students_stats_with_discipline_configs_grouped_by_category
+    )
 
-    for student_full_name, stats_discipline_configs in (
-            students_stats_with_discipline_configs_grouped_by_category_summarized.items()):
+    for (
+        student_full_name,
+        stats_discipline_configs,
+    ) in students_stats_with_discipline_configs_grouped_by_category_summarized.items():
         regular_disciplines_configs = stats_discipline_configs[REGULAR_CATEGORY]
 
         discipline_configs_grouped_by_name = defaultdict(list)
@@ -196,18 +217,21 @@ def get_students_stats_with_discipline_configs_grouped_by_category_summarized(
                 summarized_study_hours += discipline_config.study_hours
                 summarized_credits_number += discipline_config.credits_number
 
-            summarized_regular_stats_discipline_configs.append(DisciplineConfig(
-                summarized_control_form,
-                summarized_name,
-                min(summarized_semesters),
-                summarized_mark,
-                summarized_study_hours,
-                summarized_credits_number,
-                summarized_category
-            ))
+            summarized_regular_stats_discipline_configs.append(
+                DisciplineConfig(
+                    summarized_control_form,
+                    summarized_name,
+                    min(summarized_semesters),
+                    summarized_mark,
+                    summarized_study_hours,
+                    summarized_credits_number,
+                    summarized_category,
+                )
+            )
 
         summarized_regular_stats_discipline_configs.sort(
-            key=lambda summarized_discipline_config: summarized_discipline_config.semester)
+            key=lambda summarized_discipline_config: summarized_discipline_config.semester
+        )
 
         stats_discipline_configs[REGULAR_CATEGORY] = summarized_regular_stats_discipline_configs
 
@@ -215,7 +239,7 @@ def get_students_stats_with_discipline_configs_grouped_by_category_summarized(
 
 
 def get_disciplines_for_student_config(
-        stats_discipline_configs: list[DisciplineConfig]
+    stats_discipline_configs: list[DisciplineConfig],
 ) -> list[tuple[str, str, str]]:
     """
     Formats a list of discipline configurations for output, including name, hours, credits, and marks.
@@ -231,17 +255,20 @@ def get_disciplines_for_student_config(
         discipline_hours = str(discipline_config.study_hours)
 
         if discipline_config.credits_number.is_integer():
-            discipline_credits_number = (str(int(discipline_config.credits_number))
-                                         if int(discipline_config.credits_number) != 0
-                                         else '')
+            discipline_credits_number = (
+                str(int(discipline_config.credits_number))
+                if int(discipline_config.credits_number) != 0
+                else ''
+            )
         else:
             discipline_credits_number = str(discipline_config.credits_number).replace('.', ',')
 
         if discipline_credits_number == '':
             discipline_hours_and_credits_number = discipline_hours
         else:
-            discipline_hours_and_credits_number = (discipline_hours +
-                                                   CREDITS_NUMBER_TEMPLATE.format(discipline_credits_number))
+            discipline_hours_and_credits_number = discipline_hours + CREDITS_NUMBER_TEMPLATE.format(
+                discipline_credits_number
+            )
 
         if isinstance(discipline_config.mark, list):
             if all(mark == CREDIT_MARK for mark in discipline_config.mark):
@@ -257,16 +284,15 @@ def get_disciplines_for_student_config(
 
 
 def get_students_configs(
-        students_stats_with_discipline_configs_grouped_by_category_summarized:
-        STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE,
-        diploma_themes_df: DataFrame
+    students_stats_with_discipline_configs_grouped_by_category_summarized: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE,
+    diploma_themes_df: DataFrame,
 ) -> list[StudentConfig]:
     """
     Generates a list of student configurations, including formatted disciplines and diploma themes.
 
-    :param students_stats_with_discipline_configs_grouped_by_category_summarized: 
+    :param students_stats_with_discipline_configs_grouped_by_category_summarized:
         Summarized discipline configurations grouped by category for all students.
-    :type students_stats_with_discipline_configs_grouped_by_category_summarized: 
+    :type students_stats_with_discipline_configs_grouped_by_category_summarized:
         STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE
     :param diploma_themes_df: A DataFrame containing student names and their corresponding diploma themes.
     :type diploma_themes_df: DataFrame
@@ -275,40 +301,49 @@ def get_students_configs(
     """
     students_configs = []
 
-    diploma_themes_dict = (diploma_themes_df.set_index(DIPLOMA_THEMES_DATAFRAME_FULL_NAME_COLUMN)
-                           [DIPLOMA_THEMES_DATAFRAME_THEME_COLUMN].to_dict())
-    for full_name, stats_disciplines_configs in (
-            students_stats_with_discipline_configs_grouped_by_category_summarized.items()):
+    diploma_themes_dict = diploma_themes_df.set_index(DIPLOMA_THEMES_DATAFRAME_FULL_NAME_COLUMN)[
+        DIPLOMA_THEMES_DATAFRAME_THEME_COLUMN
+    ].to_dict()
+    for (
+        full_name,
+        stats_disciplines_configs,
+    ) in students_stats_with_discipline_configs_grouped_by_category_summarized.items():
         student_full_name = full_name
 
         student_regular_disciplines = get_disciplines_for_student_config(
-            stats_disciplines_configs[REGULAR_CATEGORY])
+            stats_disciplines_configs[REGULAR_CATEGORY]
+        )
 
         student_course_work_disciplines = get_disciplines_for_student_config(
-            stats_disciplines_configs[COURSE_WORK_CATEGORY])
+            stats_disciplines_configs[COURSE_WORK_CATEGORY]
+        )
 
-        student_course_project_disciplines = (get_disciplines_for_student_config(
-            stats_disciplines_configs[COURSE_PROJECT_CATEGORY]))
+        student_course_project_disciplines = get_disciplines_for_student_config(
+            stats_disciplines_configs[COURSE_PROJECT_CATEGORY]
+        )
 
         student_practice_disciplines = get_disciplines_for_student_config(
-            stats_disciplines_configs[PRACTICE_CATEGORY])
+            stats_disciplines_configs[PRACTICE_CATEGORY]
+        )
 
         student_diploma_theme = diploma_themes_dict[full_name]
 
-        students_configs.append(StudentConfig(
-            student_full_name,
-            student_regular_disciplines,
-            student_course_work_disciplines,
-            student_course_project_disciplines,
-            student_practice_disciplines,
-            student_diploma_theme
-        ))
+        students_configs.append(
+            StudentConfig(
+                student_full_name,
+                student_regular_disciplines,
+                student_course_work_disciplines,
+                student_course_project_disciplines,
+                student_practice_disciplines,
+                student_diploma_theme,
+            )
+        )
 
     return students_configs
 
 
 def get_students_with_avg_mark(
-        students_stats_with_discipline_configs: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE
+    students_stats_with_discipline_configs: STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE,
 ) -> STUDENTS_WITH_AVG_MARK_TYPE:
     """
     Calculates the average mark for each student and sorts them in descending order.
@@ -319,8 +354,15 @@ def get_students_with_avg_mark(
     :rtype: STUDENTS_WITH_AVG_MARK_TYPE
     """
     students_with_avg_mark = []
-    for student_full_name, stats_discipline_configs in students_stats_with_discipline_configs.items():
-        student_marks = [stats_discipline_config.mark for stats_discipline_config in stats_discipline_configs if isinstance(stats_discipline_config.mark, int)]
+    for (
+        student_full_name,
+        stats_discipline_configs,
+    ) in students_stats_with_discipline_configs.items():
+        student_marks = [
+            stats_discipline_config.mark
+            for stats_discipline_config in stats_discipline_configs
+            if isinstance(stats_discipline_config.mark, int)
+        ]
         avg_mark = sum(student_marks) / len(student_marks) if student_marks else 0
         students_with_avg_mark.append((student_full_name, avg_mark))
 

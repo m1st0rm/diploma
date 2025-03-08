@@ -31,6 +31,7 @@ class CommonConfig:
        statement_date_month: The month of the statement generation.
        statement_date_year: The year of the statement generation.
     """
+
     start_date_day: str
     start_date_month: str
     start_date_year: str

@@ -26,6 +26,7 @@ class DisciplineConfig:
         credits_number: The number of credits associated with the discipline (can be integer or float).
         categoty: The category of the discipline.
     """
+
     contol_form: str
     name: str
     semester: int

@@ -24,6 +24,7 @@ class StudentConfig:
         practice_disciplines: A list of practice disciplines as tuples (name, hours/credits, mark).
         diploma_theme: The theme or title of the student's diploma project.
     """
+
     full_name: str
     regular_disciplines: list[tuple[str, str, str]]
     course_work_disciplines: list[tuple[str, str, str]]

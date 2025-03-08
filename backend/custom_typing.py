@@ -37,7 +37,9 @@ STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_TYPE: Maps student names to their list of
 - Value: A list of DisciplineConfig objects representing the student's disciplines.
 """
 
-STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE = dict[str, dict[str, list[DisciplineConfig]]]
+STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE = dict[
+    str, dict[str, list[DisciplineConfig]]
+]
 """
 STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_TYPE: 
 Maps student names to their discipline configurations grouped by categories.
@@ -48,7 +50,9 @@ Maps student names to their discipline configurations grouped by categories.
     - Inner value: List of DisciplineConfig objects within the given category.
 """
 
-STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE = dict[str, dict[str, list[DisciplineConfig]]]
+STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE = dict[
+    str, dict[str, list[DisciplineConfig]]
+]
 """
 STUDENTS_STATS_WITH_DISCIPLINE_CONFIGS_GROUPED_BY_CATEGORY_SUMMARIZED_TYPE: 
 Represents summarized discipline configurations grouped by categories.
@@ -69,4 +73,3 @@ STUDENTS_WITH_AVG_MARK_TYPE: A tuple containing multiple tuples of student names
     - First element: Student's full name (str).
     - Second element: Average mark (float).
 """
-

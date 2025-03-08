@@ -21,15 +21,15 @@ Dependencies:
 - backend.custom_typing: Custom typing definition for STUDENTS_STATS_RAW_TYPE.
 """
 
-import pandas
 import os
+
+import pandas
 from pandas import DataFrame
+
 from backend.custom_typing import STUDENTS_STATS_RAW_TYPE, STUDENTS_WITH_AVG_MARK_TYPE
 
 
-def read_xlsx(
-        file_path: str
-) -> DataFrame:
+def read_xlsx(file_path: str) -> DataFrame:
     """
     Reads an Excel file and returns its content as a DataFrame.
 
@@ -41,10 +41,7 @@ def read_xlsx(
     return pandas.read_excel(file_path)
 
 
-def map_dfs_columns(
-        dfs: list[DataFrame],
-        key_column: str = "ФИО"
-) -> list[DataFrame]:
+def map_dfs_columns(dfs: list[DataFrame], key_column: str = "ФИО") -> list[DataFrame]:
     """
     Updates column names for a list of DataFrames, prefixing column names with an index.
 
@@ -58,19 +55,13 @@ def map_dfs_columns(
     mapped_dfs = []
     for i, df in enumerate(dfs):
         updated_df = df.copy()
-        updated_df.columns = [
-            f"{i + 1}.{col}" if col != key_column else col
-            for col in df.columns
-        ]
+        updated_df.columns = [f"{i + 1}.{col}" if col != key_column else col for col in df.columns]
         mapped_dfs.append(updated_df)
 
     return mapped_dfs
 
 
-def join_dfs(
-        dfs: list[DataFrame],
-        join_column: str = "ФИО"
-) -> DataFrame:
+def join_dfs(dfs: list[DataFrame], join_column: str = "ФИО") -> DataFrame:
     """
     Performs an inner join on a list of DataFrames based on a common column.
 
@@ -88,10 +79,7 @@ def join_dfs(
     return result_df
 
 
-def get_students_stats_raw(
-        df: DataFrame,
-        set_index: str = "ФИО"
-) -> STUDENTS_STATS_RAW_TYPE:
+def get_students_stats_raw(df: DataFrame, set_index: str = "ФИО") -> STUDENTS_STATS_RAW_TYPE:
     """
     Splits a DataFrame row-by-row into individual DataFrames and converts each row into a dictionary.
 
@@ -107,8 +95,8 @@ def get_students_stats_raw(
 
 
 def make_students_with_avg_mark_xlsx_file(
-        data_with_avg_marks: STUDENTS_WITH_AVG_MARK_TYPE,
-        save_directory_path: str,
+    data_with_avg_marks: STUDENTS_WITH_AVG_MARK_TYPE,
+    save_directory_path: str,
 ) -> None:
     """
     Builds Dataframe with students' full names and average marks, writing it to .xlsx file.

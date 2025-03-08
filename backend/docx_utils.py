@@ -15,19 +15,21 @@ Dependencies:
 - backend.classes.common_config: Common configuration class.
 """
 
-from docx import Document
-from docx.shared import Pt
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from backend.classes.student_config import StudentConfig
-from backend.classes.common_config import CommonConfig
 import os
+
+from docx import Document
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
+from docx.shared import Pt
+
+from backend.classes.common_config import CommonConfig
+from backend.classes.student_config import StudentConfig
 
 
 def build_docx(
-        template_path: str,
-        save_directory_path: str,
-        student_config: StudentConfig,
-        common_config: CommonConfig,
+    template_path: str,
+    save_directory_path: str,
+    student_config: StudentConfig,
+    common_config: CommonConfig,
 ) -> None:
     """
     Generates a single Word document (.docx) for a student based on the provided template.
@@ -52,38 +54,46 @@ def build_docx(
 
     paragraph_2 = document.paragraphs[10]
     paragraph_2.clear()
-    run_2_1 = paragraph_2.add_run(f"с {common_config.start_date_day} {common_config.start_date_month} 20")
+    run_2_1 = paragraph_2.add_run(
+        f"с {common_config.start_date_day} {common_config.start_date_month} 20"
+    )
     run_2_1.font.size = Pt(12)
     run_2_2 = paragraph_2.add_run(f"{common_config.start_date_year}")
     run_2_2.font.size = Pt(12)
     run_2_2.underline = True
-    run_2_3 = paragraph_2.add_run(f" г. по {common_config.end_date_day} {common_config.end_date_month} 20")
+    run_2_3 = paragraph_2.add_run(
+        f" г. по {common_config.end_date_day} {common_config.end_date_month} 20"
+    )
     run_2_3.font.size = Pt(12)
     run_2_4 = paragraph_2.add_run(f"{common_config.end_date_year}")
     run_2_4.font.size = Pt(12)
     run_2_4.underline = True
-    run_2_5 = paragraph_2.add_run(f" г.")
+    run_2_5 = paragraph_2.add_run(" г.")
     run_2_5.font.size = Pt(12)
 
     paragraph_3 = document.paragraphs[11]
     paragraph_3.clear()
-    run_3_1 = paragraph_3.add_run(f"по специальности ")
+    run_3_1 = paragraph_3.add_run("по специальности ")
     run_3_1.font.size = Pt(12)
-    run_3_2 = paragraph_3.add_run(f"{common_config.speciality_code} «{common_config.speciality_name}»")
+    run_3_2 = paragraph_3.add_run(
+        f"{common_config.speciality_code} «{common_config.speciality_name}»"
+    )
     run_3_2.font.size = Pt(12)
     run_3_2.underline = True
 
     paragraph_4 = document.paragraphs[12]
     paragraph_4.clear()
-    run_4_1 = paragraph_4.add_run(f"направлению специальности ")
+    run_4_1 = paragraph_4.add_run("направлению специальности ")
     run_4_1.font.size = Pt(12)
-    run_4_2 = paragraph_4.add_run(f"{common_config.speciality_area_code} «{common_config.speciality_area_name}»")
+    run_4_2 = paragraph_4.add_run(
+        f"{common_config.speciality_area_code} «{common_config.speciality_area_name}»"
+    )
     run_4_2.font.size = Pt(12)
     run_4_2.underline = True
 
     paragraph_5 = document.paragraphs[19]
     paragraph_5.clear()
-    run_5_1 = paragraph_5.add_run(f"Выполнил(а) дипломный проект на тему: ")
+    run_5_1 = paragraph_5.add_run("Выполнил(а) дипломный проект на тему: ")
     run_5_1.font.size = Pt(11)
     run_5_2 = paragraph_5.add_run(f"«{student_config.diploma_theme}»")
     run_5_2.font.size = Pt(11)
@@ -91,9 +101,11 @@ def build_docx(
 
     paragraph_6 = document.paragraphs[31]
     paragraph_6.clear()
-    run_6_1 = paragraph_6.add_run(f"г. Могилев «{common_config.statement_date_day}»"
-                                  f" {common_config.statement_date_month}"
-                                  f" {common_config.statement_date_year}\tРегистрационный № ____")
+    run_6_1 = paragraph_6.add_run(
+        f"г. Могилев «{common_config.statement_date_day}»"
+        f" {common_config.statement_date_month}"
+        f" {common_config.statement_date_year}\tРегистрационный № ____"
+    )
     run_6_1.font.size = Pt(11)
 
     table1 = document.tables[0]
@@ -189,10 +201,10 @@ def build_docx(
 
 
 def build_statements(
-        template_path: str,
-        save_directory_path: str,
-        students_configs: list[StudentConfig],
-        common_config: CommonConfig,
+    template_path: str,
+    save_directory_path: str,
+    students_configs: list[StudentConfig],
+    common_config: CommonConfig,
 ) -> None:
     """
     Generates multiple Word documents (.docx) for a list of students using a provided template.
@@ -208,7 +220,4 @@ def build_statements(
     :return: None
     """
     for student_config in students_configs:
-        build_docx(template_path,
-                   save_directory_path,
-                   student_config,
-                   common_config)
+        build_docx(template_path, save_directory_path, student_config, common_config)
