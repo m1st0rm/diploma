@@ -85,7 +85,7 @@ def get_students_stats_with_discipline_configs(
             discipline_configs = []
             for discipline_info, discipline_mark in disciplines_dict.items():
                 discipline_control_form = discipline_info.split(':')[2]
-                discipline_name = discipline_info.split('.')[1].split('/')[0]
+                discipline_name = discipline_info.split('.', 1)[1].split('/')[0]
                 discipline_semester = int(discipline_info.split('.')[0])
                 discipline_study_hours = int(discipline_info.split('/')[1].split(':')[0])
                 discipline_credits_number = float(discipline_info.split(':')[1])
