@@ -9,6 +9,7 @@ from backend.data_utils import (
     get_students_stats_with_discipline_configs,
     get_students_stats_with_discipline_configs_grouped_by_category,
     get_students_stats_with_discipline_configs_grouped_by_category_summarized,
+    get_students_with_avg_mark
 )
 
 PRACTICE_CATEGORY = 'practice'
@@ -101,6 +102,33 @@ def test_get_students_configs(sample_students_stats_raw, sample_diploma_themes_d
     assert len(result) == 2
     assert isinstance(result[0], StudentConfig)
     assert result[0].full_name == "Иванов Иван"
+
+
+def test_get_students_with_avg_mark():
+    students_stats = {
+        "Иванов Иван": [
+            DisciplineConfig(contol_form="exam", name="Математика", semester=1,
+                             mark=5, study_hours=60, credits_number=3, categoty="regular"),
+            DisciplineConfig(contol_form="test", name="Физика", semester=1,
+                             mark=4, study_hours=45, credits_number=3, categoty="regular"),
+        ],
+        "Петров Петр": [
+            DisciplineConfig(contol_form="exam", name="Математика", semester=1,
+                             mark=3, study_hours=60, credits_number=3, categoty="regular"),
+            DisciplineConfig(contol_form="test", name="Физика", semester=1,
+                             mark=2, study_hours=45, credits_number=3, categoty="regular"),
+        ],
+    }
+
+    result = get_students_with_avg_mark(students_stats)
+
+    expected = (
+        ("Иванов Иван", pytest.approx(4.5)),
+        ("Петров Петр", pytest.approx(2.5)),
+    )
+
+    assert isinstance(result, tuple)
+    assert result == expected
 
 
 if __name__ == "__main__":
