@@ -244,7 +244,7 @@ def push_make_statements_button() -> None:
     if not os.path.exists(state_holder['save_directory_path']):
         messagebox.showerror(
             title='Ошибка',
-            message='Директории сохранения выписок не существует!'
+            message='Директория сохранения выписок не существует!'
         )
         return
 
