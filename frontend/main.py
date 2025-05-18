@@ -219,6 +219,35 @@ def push_make_statements_button() -> None:
         )
         return
 
+    for file in state_holder['semester_files_paths']:
+        if not os.path.exists(file):
+            messagebox.showerror(
+                title='Ошибка',
+                message='Одного или нескольких файлов зачётно-экзаменационных ведомостей не существует!'
+            )
+            return
+
+    if not os.path.exists(state_holder['diploma_file_path']):
+        messagebox.showerror(
+            title='Ошибка',
+            message='Файла с темами дипломных проектов не существует!'
+        )
+        return
+
+    if not os.path.exists(state_holder['template_file_path']):
+        messagebox.showerror(
+            title='Ошибка',
+            message='Файла шаблона выписки не существует!'
+        )
+        return
+
+    if not os.path.exists(state_holder['save_directory_path']):
+        messagebox.showerror(
+            title='Ошибка',
+            message='Директории сохранения выписок не существует!'
+        )
+        return
+
     ret_code = runtime(state_holder)
 
     if ret_code in [1, 2, 3]:
